@@ -12,7 +12,7 @@ class PropStoryBubble : public QDialog
     Q_OBJECT
 
 public:
-    explicit PropStoryBubble(const QString &title, const QString &story, int order, bool locked, QColor &color, QWidget *parent = 0);
+    explicit PropStoryBubble(const QString &title, const QString &story, int order, bool locked, const QColor &color, QWidget *parent = 0);
     ~PropStoryBubble();
 
 public:
@@ -22,8 +22,16 @@ public:
     bool    Locked();
     QColor  Color();
 
+public slots:
+    void ChangeColor(QColor color);
+
 private slots:
     void on_cb_locked_toggled(bool checked);
+
+    void on_btn_color_clicked();
+
+private:
+    QString ToStyleSheet(const QColor &background);
 
 private:
     Ui::PropStoryBubble *ui;

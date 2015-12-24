@@ -54,6 +54,8 @@ const int InsertTextButton = 10;
 //! [0]
 MainWindow::MainWindow()
 {
+    m_ShiftHeld = false;
+
     createActions();
     createToolBox();
     createMenus();
@@ -69,6 +71,7 @@ MainWindow::MainWindow()
     createToolbars();
 
     view = new QGraphicsView(scene);
+    view->setDragMode(QGraphicsView::RubberBandDrag);
 
     QDockWidget * dock = new QDockWidget("Tools", this);
     dock->setWidget(toolBox);
@@ -77,10 +80,28 @@ MainWindow::MainWindow()
     setCentralWidget(view);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
 
-    setWindowTitle(tr("Diagramscene"));
+    setWindowTitle(tr("Chronicler-Next"));
     setUnifiedTitleAndToolBarOnMac(true);
 }
 //! [0]
+
+void MainWindow::keyPressEvent(QKeyEvent *evt)
+{
+    QMainWindow::keyPressEvent(evt);
+
+    if(evt->key() == Qt::Key_Shift)
+        m_ShiftHeld = true;
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *evt)
+{
+    QMainWindow::keyReleaseEvent(evt);
+
+    m_ShiftHeld = false;
+    pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
+    scene->setMode(DiagramScene::MoveItem);
+}
+
 
 //! [1]
 void MainWindow::backgroundButtonGroupClicked(QAbstractButton *button)
@@ -145,9 +166,9 @@ void MainWindow::deleteItem()
 //! [3]
 
 //! [4]
-void MainWindow::pointerGroupClicked(int)
+void MainWindow::pointerGroupClicked(int id)
 {
-    scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
+    scene->setMode(DiagramScene::Mode(id));
 }
 //! [4]
 
@@ -188,11 +209,13 @@ void MainWindow::sendToBack()
 //! [6]
 
 //! [7]
-void MainWindow::itemInserted(CBubble *item)
+void MainWindow::itemInserted(CBubble *)
 {
-    pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-    scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
-    //buttonGroup->button(int(item->diagramType()))->setChecked(false);
+    if(!m_ShiftHeld)
+    {
+        pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
+        scene->setMode(DiagramScene::MoveItem);// DiagramScene::Mode(pointerTypeGroup->checkedId()));
+    }
 }
 //! [7]
 
@@ -297,17 +320,32 @@ void MainWindow::handleFontChange()
 //! [18]
 
 //! [19]
-void MainWindow::itemSelected(QGraphicsItem *item)
+void MainWindow::itemSelected(QGraphicsItem *selectedItem)
 {
-    DiagramTextItem *textItem =
-    qgraphicsitem_cast<DiagramTextItem *>(item);
+    if(!scene->isRubberBandSelecting())
+    {
+        qreal zValue = 0;
+        foreach (QGraphicsItem *item, scene->items())
+            if (item->zValue() >= zValue)
+                zValue = item->zValue() + 0.0000001;
 
-    QFont font = textItem->font();
-    fontCombo->setCurrentFont(font);
-    fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
-    boldAction->setChecked(font.weight() == QFont::Bold);
-    italicAction->setChecked(font.italic());
-    underlineAction->setChecked(font.underline());
+        selectedItem->setZValue(zValue);
+    }
+
+    /*
+    if(scene->items().size() > 0)
+    {
+        CBubble *bbl = qgraphicsitem_cast<CBubble *>(item);
+        if(bbl)
+        {
+            QFont font = scene->font();
+            boldAction->setChecked(font.weight() == QFont::Bold);
+            italicAction->setChecked(font.italic());
+            underlineAction->setChecked(font.underline());
+            fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
+            fontCombo->setCurrentFont(font);
+        }
+    }*/
 }
 //! [19]
 
@@ -462,7 +500,7 @@ void MainWindow::createToolbars()
     fontSizeCombo->setEditable(true);
     for (int i = 8; i < 30; i = i + 2)
         fontSizeCombo->addItem(QString().setNum(i));
-    QIntValidator *validator = new QIntValidator(2, 64, this);
+    QIntValidator *validator = new QIntValidator(2, 42, this);
     fontSizeCombo->setValidator(validator);
     connect(fontSizeCombo, SIGNAL(currentIndexChanged(QString)),
             this, SLOT(fontSizeChanged(QString)));
@@ -516,9 +554,24 @@ void MainWindow::createToolbars()
     linePointerButton->setCheckable(true);
     linePointerButton->setIcon(QIcon(":/images/linepointer.png"));
 
+
+    QToolButton *storyBubbleToolButton = new QToolButton;
+    storyBubbleToolButton->setCheckable(true);
+    storyBubbleToolButton->setIcon(QIcon(":/images/floodfill.png"));
+    QToolButton *conditionBubbleToolButton = new QToolButton;
+    conditionBubbleToolButton->setCheckable(true);
+    conditionBubbleToolButton->setIcon(QIcon(":/images/floodfill.png"));
+    QToolButton *actionBubbleToolButton = new QToolButton;
+    actionBubbleToolButton->setCheckable(true);
+    actionBubbleToolButton->setIcon(QIcon(":/images/floodfill.png"));
+
+
     pointerTypeGroup = new QButtonGroup(this);
     pointerTypeGroup->addButton(pointerButton, int(DiagramScene::MoveItem));
     pointerTypeGroup->addButton(linePointerButton, int(DiagramScene::InsertLine));
+    pointerTypeGroup->addButton(storyBubbleToolButton, int(DiagramScene::InsertStory));
+    pointerTypeGroup->addButton(conditionBubbleToolButton, int(DiagramScene::InsertCondition));
+    pointerTypeGroup->addButton(actionBubbleToolButton, int(DiagramScene::InsertAction));
     connect(pointerTypeGroup, SIGNAL(buttonClicked(int)),
             this, SLOT(pointerGroupClicked(int)));
 
@@ -530,10 +583,28 @@ void MainWindow::createToolbars()
     connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),
             this, SLOT(sceneScaleChanged(QString)));
 
-    pointerToolbar = addToolBar(tr("Pointer type"));
-    pointerToolbar->addWidget(pointerButton);
-    pointerToolbar->addWidget(linePointerButton);
-    pointerToolbar->addWidget(sceneScaleCombo);
+    pointerToolBar = addToolBar(tr("Pointer type"));
+    pointerToolBar->addWidget(pointerButton);
+    pointerToolBar->addWidget(linePointerButton);
+    pointerToolBar->addWidget(storyBubbleToolButton);
+    pointerToolBar->addWidget(conditionBubbleToolButton);
+    pointerToolBar->addWidget(actionBubbleToolButton);
+    pointerToolBar->addWidget(sceneScaleCombo);
+
+
+
+
+//    bubbleTypeGroup = new QButtonGroup(this);
+//    bubbleTypeGroup->addButton(storyBubbleToolButton);
+//    bubbleTypeGroup->addButton(conditionBubbleToolButton);
+//    bubbleTypeGroup->addButton(actionBubbleToolButton);
+
+
+//    bubbleToolBar = addToolBar(tr("Bubbles"));
+//    bubbleToolBar->addWidget(storyBubbleToolButton);
+//    bubbleToolBar->addWidget(conditionBubbleToolButton);
+//    bubbleToolBar->addWidget(actionBubbleToolButton);
+
 //! [27]
 }
 //! [27]

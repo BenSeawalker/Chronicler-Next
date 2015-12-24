@@ -71,6 +71,10 @@ class MainWindow : public QMainWindow
 public:
    MainWindow();
 
+protected:
+   virtual void keyPressEvent(QKeyEvent *evt);
+   virtual void keyReleaseEvent(QKeyEvent *evt);
+
 private slots:
     void backgroundButtonGroupClicked(QAbstractButton *button);
     void buttonGroupClicked(int id);
@@ -78,7 +82,7 @@ private slots:
     void pointerGroupClicked(int id);
     void bringToFront();
     void sendToBack();
-    void itemInserted(CBubble *item);
+    void itemInserted(CBubble *);
     void textInserted(QGraphicsTextItem *item);
     void currentFontChanged(const QFont &font);
     void fontSizeChanged(const QString &size);
@@ -90,10 +94,11 @@ private slots:
     void fillButtonTriggered();
     void lineButtonTriggered();
     void handleFontChange();
-    void itemSelected(QGraphicsItem *item);
+    void itemSelected(QGraphicsItem *selectedItem);
     void about();
 
 private:
+
     void createToolBox();
     void createActions();
     void createMenus();
@@ -105,6 +110,8 @@ private:
     QMenu *createColorMenu(const char *slot, QColor defaultColor);
     QIcon createColorToolButtonIcon(const QString &image, QColor color);
     QIcon createColorIcon(QColor color);
+
+    bool m_ShiftHeld;
 
     DiagramScene *scene;
     QGraphicsView *view;
@@ -124,7 +131,8 @@ private:
     QToolBar *textToolBar;
     QToolBar *editToolBar;
     QToolBar *colorToolBar;
-    QToolBar *pointerToolbar;
+    QToolBar *pointerToolBar;
+    QToolBar *bubbleToolBar;
 
     QComboBox *sceneScaleCombo;
     QComboBox *itemColorCombo;
@@ -136,9 +144,12 @@ private:
     QButtonGroup *buttonGroup;
     QButtonGroup *pointerTypeGroup;
     QButtonGroup *backgroundButtonGroup;
+    QButtonGroup *bubbleTypeGroup;
+
     QToolButton *fontColorToolButton;
     QToolButton *fillColorToolButton;
     QToolButton *lineColorToolButton;
+
     QAction *boldAction;
     QAction *underlineAction;
     QAction *italicAction;

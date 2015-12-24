@@ -8,7 +8,8 @@ HEADERS	    =   mainwindow.h \
     cbubble.h \
     cstorybubble.h \
     ctextitem.h \
-    propstorybubble.h
+    propstorybubble.h \
+    ctextedit.h
 SOURCES	    =   mainwindow.cpp \
 		diagramitem.cpp \
 		main.cpp \
@@ -18,7 +19,8 @@ SOURCES	    =   mainwindow.cpp \
     cbubble.cpp \
     cstorybubble.cpp \
     ctextitem.cpp \
-    propstorybubble.cpp
+    propstorybubble.cpp \
+    ctextedit.cpp
 RESOURCES   =	chroniclernext.qrc
 
 

@@ -2,13 +2,10 @@
 
 #include "arrow.h"
 
-#include <QGraphicsScene>
-#include <QGraphicsSceneContextMenuEvent>
-#include <QMenu>
-#include <QPainter>
+
 
 CBubble::CBubble(QMenu *contextMenu, QGraphicsItem *parent)
-    : QGraphicsPolygonItem(parent), m_contextMenu(contextMenu)
+    : QGraphicsPolygonItem(parent), m_contextMenu(contextMenu), m_order(0), m_locked(false)
 {
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);

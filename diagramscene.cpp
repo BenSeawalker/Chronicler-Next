@@ -58,6 +58,9 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
     myItemColor = Qt::white;
     myTextColor = Qt::black;
     myLineColor = Qt::black;
+    m_rubberBand = false;
+
+    setBackgroundBrush(QBrush(QColor(Qt::gray)));
 }
 //! [0]
 
@@ -98,13 +101,16 @@ void DiagramScene::setItemColor(const QColor &color)
 //! [4]
 void DiagramScene::setFont(const QFont &font)
 {
-    myFont = font;
+    if(myFont != font)
+    {
+        myFont = font;
 
-    if (isItemChange(DiagramTextItem::Type)) {
-        QGraphicsTextItem *item = qgraphicsitem_cast<DiagramTextItem *>(selectedItems().first());
-        //At this point the selection can change so the first selected item might not be a DiagramTextItem
-        if (item)
-            item->setFont(myFont);
+        foreach (QGraphicsItem *item, items())
+        {
+            CBubble *bbl = qgraphicsitem_cast<CBubble *>(item);
+            if(bbl)
+                bbl->SetFont(myFont);
+        }
     }
 }
 //! [4]
@@ -141,21 +147,24 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
     CStoryBubble *item;
     switch (myMode) {
-        case InsertItem:
+        case InsertStory:
             item = new CStoryBubble(myItemMenu);
             item->setBrush(myItemColor);
             addItem(item);
             item->setPos(mouseEvent->scenePos());
+            //item->setSelected(true);
+            item->SetFont(myFont);
+            connect(item, SIGNAL(SelectedChanged(QGraphicsItem*)), this, SIGNAL(itemSelected(QGraphicsItem*)));
             emit itemInserted(item);
-            break;
-//! [6] //! [7]
+        break;
+
         case InsertLine:
             line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(),
                                         mouseEvent->scenePos()));
             line->setPen(QPen(myLineColor, 2));
             addItem(line);
-            break;
-//! [7] //! [8]
+        break;
+
         case InsertText:
             textItem = new DiagramTextItem();
             textItem->setFont(myFont);
@@ -169,11 +178,16 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             textItem->setDefaultTextColor(myTextColor);
             textItem->setPos(mouseEvent->scenePos());
             emit textInserted(textItem);
-//! [8] //! [9]
+        break;
+
     default:
-        ;
+        break;
     }
+
     QGraphicsScene::mousePressEvent(mouseEvent);
+
+    if(selectedItems().size() == 0)
+        m_rubberBand = true;
 }
 //! [9]
 
@@ -222,6 +236,8 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //! [12] //! [13]
     line = 0;
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
+
+    m_rubberBand = false;
 }
 //! [13]
 
