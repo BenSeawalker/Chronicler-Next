@@ -8,6 +8,8 @@ CStoryBubble::CStoryBubble(QMenu *contextMenu, QGraphicsItem *parent)
 {
     setPolygon(QPolygonF(QRectF(-100,-100,200,200)));
 
+    m_type = Story;
+
     m_color = QColor(150,150,255);
 
     m_title = new CTextItem("Story And a Half", QRectF(), this);
@@ -25,6 +27,8 @@ CStoryBubble::CStoryBubble(QMenu *contextMenu, QGraphicsItem *parent)
 
 void CStoryBubble::mousePressEvent(QGraphicsSceneMouseEvent *evt)
 {
+    CBubble::mousePressEvent(evt);
+
     QRectF b = sceneBoundingRect();
     QRectF resizeRect(QPointF(b.x() + b.width() - 20, b.y() + b.height() - 20), QSizeF(20,20));
 
@@ -34,8 +38,6 @@ void CStoryBubble::mousePressEvent(QGraphicsSceneMouseEvent *evt)
         m_offset = evt->scenePos();
         m_lastBounds = boundingRect();
     }
-
-    CBubble::mousePressEvent(evt);
 }
 
 void CStoryBubble::mouseReleaseEvent(QGraphicsSceneMouseEvent *evt)
@@ -74,7 +76,7 @@ void CStoryBubble::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt)
 {
     QGraphicsItem::mouseDoubleClickEvent(evt);
 
-    m_properties = new PropStoryBubble(m_title->SetText(), m_story->SetText(), m_order, m_locked, m_color);
+    m_properties = new PropStoryBubble(m_title->Text(), m_story->Text(), m_order, m_locked, m_color);
     connect(m_properties, SIGNAL(accepted()), this, SLOT(PropertiesAccepted()));
     m_properties->show();
 }
@@ -98,7 +100,6 @@ QVariant CStoryBubble::itemChange(GraphicsItemChange change, const QVariant &val
 {
     if (change == QGraphicsItem::ItemSelectedHasChanged && value.toBool())
         emit SelectedChanged(this);
-
 
     return CBubble::itemChange(change, value);
 }

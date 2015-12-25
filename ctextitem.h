@@ -13,7 +13,7 @@ public:
 public:
     CTextItem(const QString &text, const QRectF &bounds, QGraphicsItem *parent = 0);
 
-    QString SetText() { return m_text; }
+    QString Text() { return m_text; }
     void SetText(const QString& text) { m_text = text; update(); }
 
     void SetFont(const QFont &font) { m_font = font; }

@@ -9,7 +9,9 @@ HEADERS	    =   mainwindow.h \
     cstorybubble.h \
     ctextitem.h \
     propstorybubble.h \
-    ctextedit.h
+    ctextedit.h \
+    cstoryproperties.h \
+    cpropertiesview.h
 SOURCES	    =   mainwindow.cpp \
 		diagramitem.cpp \
 		main.cpp \
@@ -20,7 +22,9 @@ SOURCES	    =   mainwindow.cpp \
     cstorybubble.cpp \
     ctextitem.cpp \
     propstorybubble.cpp \
-    ctextedit.cpp
+    ctextedit.cpp \
+    cstoryproperties.cpp \
+    cpropertiesview.cpp
 RESOURCES   =	chroniclernext.qrc
 
 
@@ -28,4 +32,4 @@ RESOURCES   =	chroniclernext.qrc
 TARGET = Chronicler-Next
 
 FORMS += \
-    propstorybubble.ui
+    cstoryproperties.ui

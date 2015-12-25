@@ -15,6 +15,10 @@ class CStoryBubble : public CBubble
     Q_OBJECT
 
 public:
+    friend class CStoryProperties;
+
+
+public:
     CStoryBubble(QMenu *contextMenu, QGraphicsItem *parent = 0);
 
 public:

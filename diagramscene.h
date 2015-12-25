@@ -87,6 +87,8 @@ signals:
     void itemInserted(CBubble *item);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
+    void leftPressed();
+    void leftReleased();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) Q_DECL_OVERRIDE;

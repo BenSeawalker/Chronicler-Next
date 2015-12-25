@@ -41,9 +41,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "diagramitem.h"
-
 #include <QMainWindow>
+
+#include "diagramitem.h"
+#include "cpropertiesview.h"
+
 
 class DiagramScene;
 class CBubble;
@@ -75,6 +77,9 @@ protected:
    virtual void keyPressEvent(QKeyEvent *evt);
    virtual void keyReleaseEvent(QKeyEvent *evt);
 
+//signals:
+//    void SelectedItemChanged(CBubble *bbl);
+
 private slots:
     void backgroundButtonGroupClicked(QAbstractButton *button);
     void buttonGroupClicked(int id);
@@ -96,6 +101,8 @@ private slots:
     void handleFontChange();
     void itemSelected(QGraphicsItem *selectedItem);
     void about();
+    void sceneLeftPressed();
+    void sceneLeftReleased();
 
 private:
 
@@ -156,6 +163,9 @@ private:
     QAction *textAction;
     QAction *fillAction;
     QAction *lineAction;
+
+    QDockWidget *dock;
+    CPropertiesView *properties;
 };
 //! [0]
 

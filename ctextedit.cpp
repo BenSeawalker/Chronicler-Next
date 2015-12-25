@@ -5,6 +5,7 @@
 CTextEdit::CTextEdit(QWidget * parent, QStringListModel * model, const QString & text)
 : QTextEdit(parent), m_completer(0), m_model(model), m_enabled(true)
 {
+    setTabChangesFocus(true);
     m_filtered = new QStringListModel(this);
     setText(text);
     setCompleter(new QCompleter(m_filtered, this));

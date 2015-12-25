@@ -188,6 +188,8 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
     if(selectedItems().size() == 0)
         m_rubberBand = true;
+
+    emit leftPressed();
 }
 //! [9]
 
@@ -238,6 +240,8 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 
     m_rubberBand = false;
+
+    emit leftReleased();
 }
 //! [13]
 

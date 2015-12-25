@@ -26,21 +26,24 @@ class Arrow;
 class CBubble : public QObject, public QGraphicsPolygonItem
 {
 public:
-    enum { Type = UserType + 16 };
+    enum BType { Story, Condition, Action};
 
     CBubble(QGraphicsItem *parent);
     CBubble(QMenu *contextMenu, QGraphicsItem *parent = 0);
 
 public:
+    void addArrow(Arrow *arrow);
     void removeArrow(Arrow *arrow);
     void removeArrows();
-    QPolygonF polygon() const { return m_polygon; }
-    void addArrow(Arrow *arrow);
-    int type() const Q_DECL_OVERRIDE { return Type;}
+
     virtual QPixmap image() const;
+
+    QPolygonF polygon() const { return m_polygon; }
 
     virtual void SetFont(const QFont &font) = 0;
     QFont GetFont() { return m_font; }
+
+    BType GetType() const { return m_type;}
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) Q_DECL_OVERRIDE;
@@ -57,6 +60,7 @@ protected:
     bool m_locked;
     QColor m_color;
     QFont m_font;
+    BType m_type;
 };
 
 #endif // CBUBBLE_H

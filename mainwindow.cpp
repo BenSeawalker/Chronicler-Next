@@ -47,6 +47,7 @@
 #include "mainwindow.h"
 
 #include <QtWidgets>
+#include <QStringListModel>
 
 
 const int InsertTextButton = 10;
@@ -68,17 +69,23 @@ MainWindow::MainWindow()
             this, SLOT(textInserted(QGraphicsTextItem*)));
     connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
             this, SLOT(itemSelected(QGraphicsItem*)));
+    connect(scene, SIGNAL(leftReleased()),
+            this, SLOT(sceneLeftReleased()));
+    connect(scene, SIGNAL(leftPressed()),
+            this, SLOT(sceneLeftPressed()));
+
     createToolbars();
 
     view = new QGraphicsView(scene);
     view->setDragMode(QGraphicsView::RubberBandDrag);
 
-    QDockWidget * dock = new QDockWidget("Tools", this);
-    dock->setWidget(toolBox);
+    properties = new CPropertiesView(new QStringListModel);
+    dock = new QDockWidget("Tools", this);
+    dock->setWidget(properties);
     dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     setCentralWidget(view);
-    addDockWidget(Qt::LeftDockWidgetArea, dock);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
 
     setWindowTitle(tr("Chronicler-Next"));
     setUnifiedTitleAndToolBarOnMac(true);
@@ -331,30 +338,31 @@ void MainWindow::itemSelected(QGraphicsItem *selectedItem)
 
         selectedItem->setZValue(zValue);
     }
-
-    /*
-    if(scene->items().size() > 0)
-    {
-        CBubble *bbl = qgraphicsitem_cast<CBubble *>(item);
-        if(bbl)
-        {
-            QFont font = scene->font();
-            boldAction->setChecked(font.weight() == QFont::Bold);
-            italicAction->setChecked(font.italic());
-            underlineAction->setChecked(font.underline());
-            fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
-            fontCombo->setCurrentFont(font);
-        }
-    }*/
 }
+
+
+void MainWindow::sceneLeftPressed()
+{
+    properties->SetBubble(0);
+}
+
+void MainWindow::sceneLeftReleased()
+{
+    dock->activateWindow();
+    QList<QGraphicsItem *> selected = scene->selectedItems();
+    if(selected.size() == 1)
+    {
+        CBubble *bbl = qgraphicsitem_cast<CBubble *>(selected.first());
+        properties->SetBubble(bbl);
+    }
+}
+
 //! [19]
 
 //! [20]
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("About Diagram Scene"),
-                       tr("The <b>Diagram Scene</b> example shows "
-                          "use of the graphics framework."));
+    QMessageBox::about(this, tr("About Chronicler-Next"), tr("<b>Insert legal stuff here...</b>"));
 }
 //! [20]
 
