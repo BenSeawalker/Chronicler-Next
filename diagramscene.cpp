@@ -45,6 +45,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "cstorybubble.h"
+#include "cactionbubble.h"
 
 //! [0]
 DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
@@ -60,7 +61,7 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
     myLineColor = Qt::black;
     m_rubberBand = false;
 
-    setBackgroundBrush(QBrush(QColor(Qt::gray)));
+    setBackgroundBrush(QBrush(Qt::gray));//QColor(86,96,123)));
 }
 //! [0]
 
@@ -80,10 +81,17 @@ void DiagramScene::setLineColor(const QColor &color)
 void DiagramScene::setTextColor(const QColor &color)
 {
     myTextColor = color;
-    if (isItemChange(DiagramTextItem::Type)) {
-        DiagramTextItem *item = qgraphicsitem_cast<DiagramTextItem *>(selectedItems().first());
-        item->setDefaultTextColor(myTextColor);
+    foreach (QGraphicsItem *item, items())
+    {
+        CBubble *bbl = qgraphicsitem_cast<CBubble *>(item);
+        if(bbl)
+            bbl->SetFontColor(myTextColor);
     }
+
+//    if (isItemChange(DiagramTextItem::Type)) {
+//        DiagramTextItem *item = qgraphicsitem_cast<DiagramTextItem *>(selectedItems().first());
+//        item->setDefaultTextColor(myTextColor);
+//    }
 }
 //! [2]
 
@@ -145,15 +153,28 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
-    CStoryBubble *item;
+    CBubble *item;
     switch (myMode) {
         case InsertStory:
             item = new CStoryBubble(myItemMenu);
             item->setBrush(myItemColor);
             addItem(item);
             item->setPos(mouseEvent->scenePos());
-            //item->setSelected(true);
             item->SetFont(myFont);
+            //item->SetLineColor(myLineColor);
+            item->SetFontColor(myTextColor);
+            connect(item, SIGNAL(SelectedChanged(QGraphicsItem*)), this, SIGNAL(itemSelected(QGraphicsItem*)));
+            emit itemInserted(item);
+        break;
+
+        case InsertAction:
+            item = new CActionBubble(myItemMenu);
+            item->setBrush(myItemColor);
+            addItem(item);
+            item->setPos(mouseEvent->scenePos());
+            item->SetFont(myFont);
+            //item->SetLineColor(myLineColor);
+            item->SetFontColor(myTextColor);
             connect(item, SIGNAL(SelectedChanged(QGraphicsItem*)), this, SIGNAL(itemSelected(QGraphicsItem*)));
             emit itemInserted(item);
         break;

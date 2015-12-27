@@ -5,7 +5,9 @@
 
 
 CBubble::CBubble(QMenu *contextMenu, QGraphicsItem *parent)
-    : QGraphicsPolygonItem(parent), m_contextMenu(contextMenu), m_order(0), m_locked(false)
+    : QGraphicsPolygonItem(parent), m_contextMenu(contextMenu),
+      m_minSize(QSizeF(150,150)), m_order(0), m_locked(false),
+      m_fontColor(Qt::black), m_color(Qt::white), m_lineColor(Qt::black)
 {
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -69,4 +71,41 @@ QVariant CBubble::itemChange(GraphicsItemChange change, const QVariant &value)
     }
 
     return value;
+}
+
+
+void CBubble::SetFont(const QFont &font)
+{
+    if(font != m_font)
+    {
+        m_font = font;
+        update();
+    }
+}
+
+void CBubble::SetFontColor(const QColor &color)
+{
+    if(color != m_fontColor)
+    {
+        m_fontColor = color;
+        update();
+    }
+}
+
+void CBubble::SetColor(const QColor &color)
+{
+    if(color != m_color)
+    {
+        m_color = color;
+        update();
+    }
+}
+
+void CBubble::SetLineColor(const QColor &color)
+{
+    if(color != m_lineColor)
+    {
+        m_lineColor = color;
+        update();
+    }
 }

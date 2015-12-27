@@ -26,6 +26,8 @@ public:
 public:
     void SetBubble(CBubble *bbl);
 
+    virtual void setFont(const QFont &font);
+
 private:
     CStoryBubble *m_bbl;
 

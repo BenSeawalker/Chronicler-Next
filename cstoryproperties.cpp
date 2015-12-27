@@ -46,7 +46,6 @@ CStoryProperties::CStoryProperties(CBubble *bbl, QStringListModel *model, QWidge
         QHBoxLayout *l3 = new QHBoxLayout();
         l3->addWidget(lblOrder);
         l3->addWidget(m_order);
-        //l3->setAlignment(lblOrder, Qt::AlignRight);
 
         // Lock
         QHBoxLayout *l4 = new QHBoxLayout();
@@ -69,6 +68,8 @@ CStoryProperties::CStoryProperties(CBubble *bbl, QStringListModel *model, QWidge
     layout->addLayout(l2);
 
     setLayout(layout);
+
+
 
     SetBubble(bbl);
 }
@@ -132,3 +133,15 @@ void CStoryProperties::SetBubble(CBubble *bbl)
         setEnabled(false);
     }
 }
+
+
+void CStoryProperties::setFont(const QFont &font)
+{
+    QWidget::setFont(font);
+    m_title->setFont(font);
+    m_story->setFont(font);
+    m_lock->setFont(font);
+    m_order->setFont(font);
+}
+
+

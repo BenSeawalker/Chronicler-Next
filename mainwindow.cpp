@@ -58,7 +58,7 @@ MainWindow::MainWindow()
     m_ShiftHeld = false;
 
     createActions();
-    createToolBox();
+    //createToolBox();
     createMenus();
 
     scene = new DiagramScene(itemMenu, this);
@@ -74,18 +74,26 @@ MainWindow::MainWindow()
     connect(scene, SIGNAL(leftPressed()),
             this, SLOT(sceneLeftPressed()));
 
-    createToolbars();
+
 
     view = new QGraphicsView(scene);
     view->setDragMode(QGraphicsView::RubberBandDrag);
 
-    properties = new CPropertiesView(new QStringListModel);
-    dock = new QDockWidget("Tools", this);
+    QStringList lst = QStringList() << "*set" << "*action" << "*create" << "*if" << "*elseif";
+    QStringListModel * lstModel = new QStringListModel(lst, this);
+
+    dock = new QDockWidget("Project", this);
+    properties = new CPropertiesView(lstModel, dock);
     dock->setWidget(properties);
     dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     setCentralWidget(view);
-    addDockWidget(Qt::RightDockWidgetArea, dock);
+    addDockWidget(Qt::LeftDockWidgetArea, dock);
+
+
+    createToolbars();
+    handleFontChange();
+
 
     setWindowTitle(tr("Chronicler-Next"));
     setUnifiedTitleAndToolBarOnMac(true);
@@ -104,49 +112,52 @@ void MainWindow::keyReleaseEvent(QKeyEvent *evt)
 {
     QMainWindow::keyReleaseEvent(evt);
 
-    m_ShiftHeld = false;
-    pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-    scene->setMode(DiagramScene::MoveItem);
+    if(evt->key() == Qt::Key_Shift)
+    {
+        m_ShiftHeld = false;
+        pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
+        scene->setMode(DiagramScene::MoveItem);
+    }
 }
 
 
 //! [1]
 void MainWindow::backgroundButtonGroupClicked(QAbstractButton *button)
 {
-    QList<QAbstractButton *> buttons = backgroundButtonGroup->buttons();
-    foreach (QAbstractButton *myButton, buttons) {
-        if (myButton != button)
-            button->setChecked(false);
-    }
-    QString text = button->text();
-    if (text == tr("Blue Grid"))
-        scene->setBackgroundBrush(QPixmap(":/images/background1.png"));
-    else if (text == tr("White Grid"))
-        scene->setBackgroundBrush(QPixmap(":/images/background2.png"));
-    else if (text == tr("Gray Grid"))
-        scene->setBackgroundBrush(QPixmap(":/images/background3.png"));
-    else
-        scene->setBackgroundBrush(QPixmap(":/images/background4.png"));
+//    QList<QAbstractButton *> buttons = backgroundButtonGroup->buttons();
+//    foreach (QAbstractButton *myButton, buttons) {
+//        if (myButton != button)
+//            button->setChecked(false);
+//    }
+//    QString text = button->text();
+//    if (text == tr("Blue Grid"))
+//        scene->setBackgroundBrush(QPixmap(":/images/background1.png"));
+//    else if (text == tr("White Grid"))
+//        scene->setBackgroundBrush(QPixmap(":/images/background2.png"));
+//    else if (text == tr("Gray Grid"))
+//        scene->setBackgroundBrush(QPixmap(":/images/background3.png"));
+//    else
+//        scene->setBackgroundBrush(QPixmap(":/images/background4.png"));
 
-    scene->update();
-    view->update();
+//    scene->update();
+//    view->update();
 }
 //! [1]
 
 //! [2]
 void MainWindow::buttonGroupClicked(int id)
 {
-    QList<QAbstractButton *> buttons = buttonGroup->buttons();
-    foreach (QAbstractButton *button, buttons) {
-        if (buttonGroup->button(id) != button)
-            button->setChecked(false);
-    }
-    if (id == InsertTextButton) {
-        scene->setMode(DiagramScene::InsertText);
-    } else {
-        scene->setItemType(DiagramItem::DiagramType(id));
-        scene->setMode(DiagramScene::InsertItem);
-    }
+//    QList<QAbstractButton *> buttons = buttonGroup->buttons();
+//    foreach (QAbstractButton *button, buttons) {
+//        if (buttonGroup->button(id) != button)
+//            button->setChecked(false);
+//    }
+//    if (id == InsertTextButton) {
+//        scene->setMode(DiagramScene::InsertText);
+//    } else {
+//        scene->setItemType(DiagramItem::DiagramType(id));
+//        scene->setMode(DiagramScene::InsertItem);
+//    }
 }
 //! [2]
 
@@ -176,42 +187,47 @@ void MainWindow::deleteItem()
 void MainWindow::pointerGroupClicked(int id)
 {
     scene->setMode(DiagramScene::Mode(id));
+
+    if(DiagramScene::Mode(id) == DiagramScene::InsertLine)
+        view->setDragMode(QGraphicsView::NoDrag);
+    else
+        view->setDragMode(QGraphicsView::RubberBandDrag);
 }
 //! [4]
 
 //! [5]
 void MainWindow::bringToFront()
 {
-    if (scene->selectedItems().isEmpty())
-        return;
+//    if (scene->selectedItems().isEmpty())
+//        return;
 
-    QGraphicsItem *selectedItem = scene->selectedItems().first();
-    QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
+//    QGraphicsItem *selectedItem = scene->selectedItems().first();
+//    QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
 
-    qreal zValue = 0;
-    foreach (QGraphicsItem *item, overlapItems) {
-        if (item->zValue() >= zValue && item->type() == DiagramItem::Type)
-            zValue = item->zValue() + 0.1;
-    }
-    selectedItem->setZValue(zValue);
+//    qreal zValue = 0;
+//    foreach (QGraphicsItem *item, overlapItems) {
+//        if (item->zValue() >= zValue && item->type() == DiagramItem::Type)
+//            zValue = item->zValue() + 0.1;
+//    }
+//    selectedItem->setZValue(zValue);
 }
 //! [5]
 
 //! [6]
 void MainWindow::sendToBack()
 {
-    if (scene->selectedItems().isEmpty())
-        return;
+//    if (scene->selectedItems().isEmpty())
+//        return;
 
-    QGraphicsItem *selectedItem = scene->selectedItems().first();
-    QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
+//    QGraphicsItem *selectedItem = scene->selectedItems().first();
+//    QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
 
-    qreal zValue = 0;
-    foreach (QGraphicsItem *item, overlapItems) {
-        if (item->zValue() <= zValue && item->type() == DiagramItem::Type)
-            zValue = item->zValue() - 0.1;
-    }
-    selectedItem->setZValue(zValue);
+//    qreal zValue = 0;
+//    foreach (QGraphicsItem *item, overlapItems) {
+//        if (item->zValue() <= zValue && item->type() == DiagramItem::Type)
+//            zValue = item->zValue() - 0.1;
+//    }
+//    selectedItem->setZValue(zValue);
 }
 //! [6]
 
@@ -317,12 +333,13 @@ void MainWindow::lineButtonTriggered()
 void MainWindow::handleFontChange()
 {
     QFont font = fontCombo->currentFont();
-    font.setPointSize(fontSizeCombo->currentText().toInt());
+    font.setPointSize(fontSizeCombo->value());
     font.setWeight(boldAction->isChecked() ? QFont::Bold : QFont::Normal);
     font.setItalic(italicAction->isChecked());
     font.setUnderline(underlineAction->isChecked());
 
     scene->setFont(font);
+    properties->setFont(font);
 }
 //! [18]
 
@@ -331,12 +348,10 @@ void MainWindow::itemSelected(QGraphicsItem *selectedItem)
 {
     if(!scene->isRubberBandSelecting())
     {
-        qreal zValue = 0;
         foreach (QGraphicsItem *item, scene->items())
-            if (item->zValue() >= zValue)
-                zValue = item->zValue() + 0.0000001;
+                item->setZValue(item->zValue() - 0.0000000001);
 
-        selectedItem->setZValue(zValue);
+        selectedItem->setZValue(1);
     }
 }
 
@@ -348,7 +363,8 @@ void MainWindow::sceneLeftPressed()
 
 void MainWindow::sceneLeftReleased()
 {
-    dock->activateWindow();
+    if(!dock->isHidden())
+        dock->activateWindow();
     QList<QGraphicsItem *> selected = scene->selectedItems();
     if(selected.size() == 1)
     {
@@ -367,7 +383,7 @@ void MainWindow::about()
 //! [20]
 
 //! [21]
-void MainWindow::createToolBox()
+void MainWindow::createSidebar()
 {
     buttonGroup = new QButtonGroup(this);
     buttonGroup->setExclusive(false);
@@ -503,15 +519,21 @@ void MainWindow::createToolbars()
     fontCombo = new QFontComboBox();
     connect(fontCombo, SIGNAL(currentFontChanged(QFont)),
             this, SLOT(currentFontChanged(QFont)));
+    fontCombo->setCurrentText("Times New Roman");
+    //fontCombo->setFontFilters(QFontComboBox::ScalableFonts);// | QFontComboBox::MonospacedFonts);
 
-    fontSizeCombo = new QComboBox;
-    fontSizeCombo->setEditable(true);
-    for (int i = 8; i < 30; i = i + 2)
-        fontSizeCombo->addItem(QString().setNum(i));
-    QIntValidator *validator = new QIntValidator(2, 42, this);
-    fontSizeCombo->setValidator(validator);
-    connect(fontSizeCombo, SIGNAL(currentIndexChanged(QString)),
+
+    fontSizeCombo = new QSpinBox;
+    fontSizeCombo->setRange(8, 42);
+    fontSizeCombo->setValue(11);
+//    fontSizeCombo->setEditable(true);
+//    for (int i = 8; i <= 42; ++i)
+//        fontSizeCombo->addItem(QString().setNum(i));
+//    QIntValidator *validator = new QIntValidator(8, 42, this);
+//    fontSizeCombo->setValidator(validator);
+    connect(fontSizeCombo, SIGNAL(valueChanged(QString)),
             this, SLOT(fontSizeChanged(QString)));
+//    fontSizeCombo->setCurrentText("11");
 
     fontColorToolButton = new QToolButton;
     fontColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);

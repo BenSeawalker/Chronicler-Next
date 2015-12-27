@@ -106,7 +106,7 @@ private slots:
 
 private:
 
-    void createToolBox();
+    void createSidebar();
     void createActions();
     void createMenus();
     void createToolbars();
@@ -144,7 +144,7 @@ private:
     QComboBox *sceneScaleCombo;
     QComboBox *itemColorCombo;
     QComboBox *textColorCombo;
-    QComboBox *fontSizeCombo;
+    QSpinBox *fontSizeCombo;
     QFontComboBox *fontCombo;
 
     QToolBox *toolBox;

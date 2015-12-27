@@ -1,10 +1,11 @@
 #ifndef CTEXTITEM_H
 #define CTEXTITEM_H
 
+#include <QWidget>
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
-#include <QWidget>
+
 
 class CTextItem : public QGraphicsItem
 {
@@ -19,6 +20,8 @@ public:
     void SetFont(const QFont &font) { m_font = font; }
     void SetStyle(int style) { m_style = style; update(); }
 
+    void SetColor(const QColor &color);
+
     virtual QRectF boundingRect() const { return m_bounds; }
     virtual void Resize(const QRectF &bounds) { m_bounds = bounds; update(); }
     QRectF textBounds() const;// { return m_textBounds; }
@@ -32,6 +35,7 @@ private:
     QRectF m_bounds;
     QRectF m_textBounds;
     QFont m_font;
+    QColor m_color;
     int m_style;
 
 signals:

@@ -40,10 +40,15 @@ public:
 
     QPolygonF polygon() const { return m_polygon; }
 
-    virtual void SetFont(const QFont &font) = 0;
+    virtual void SetFont(const QFont &font);
     QFont GetFont() { return m_font; }
 
-    BType GetType() const { return m_type;}
+    virtual void SetFontColor(const QColor &color);
+    virtual void SetColor(const QColor &color);
+    virtual void SetLineColor(const QColor &color);
+
+
+    BType GetType() const { return m_type; }
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) Q_DECL_OVERRIDE;
@@ -59,8 +64,11 @@ protected:
     int m_order;
     bool m_locked;
     QColor m_color;
+    QColor m_lineColor;
     QFont m_font;
+    QColor m_fontColor;
     BType m_type;
+    QSizeF m_minSize;
 };
 
 #endif // CBUBBLE_H

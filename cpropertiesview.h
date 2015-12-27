@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QStringListModel>
+#include <QPalette>
 
 #include "cstoryproperties.h"
 
@@ -15,6 +16,8 @@ public:
 
 public:
     void SetBubble(CBubble *bbl);
+
+    virtual void setFont(const QFont &font);
 
 private:
     //CBubble::BType ItemType(QGraphicsItem *item);

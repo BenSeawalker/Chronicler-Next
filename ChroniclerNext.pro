@@ -11,7 +11,8 @@ HEADERS	    =   mainwindow.h \
     propstorybubble.h \
     ctextedit.h \
     cstoryproperties.h \
-    cpropertiesview.h
+    cpropertiesview.h \
+    cactionbubble.h
 SOURCES	    =   mainwindow.cpp \
 		diagramitem.cpp \
 		main.cpp \
@@ -24,7 +25,8 @@ SOURCES	    =   mainwindow.cpp \
     propstorybubble.cpp \
     ctextedit.cpp \
     cstoryproperties.cpp \
-    cpropertiesview.cpp
+    cpropertiesview.cpp \
+    cactionbubble.cpp
 RESOURCES   =	chroniclernext.qrc
 
 

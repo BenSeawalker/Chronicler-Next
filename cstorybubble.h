@@ -17,15 +17,14 @@ class CStoryBubble : public CBubble
 public:
     friend class CStoryProperties;
 
-
 public:
     CStoryBubble(QMenu *contextMenu, QGraphicsItem *parent = 0);
 
 public:
-    void SetFont(const QFont &font);
-    void SetFontColor(const QColor &color);
-    void SetColor(const QColor &color);
-    void SetLineColor(const QColor &color);
+    virtual void SetFont(const QFont &font);
+    virtual void SetFontColor(const QColor &color);
+    virtual void SetColor(const QColor &color);
+    virtual void SetLineColor(const QColor &color);
 
 
 protected:
@@ -38,7 +37,7 @@ protected:
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *evt);
 
     virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *evt);
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt);
+//    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt);
 
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
@@ -52,7 +51,7 @@ private:
     bool m_resize;
     QPointF m_offset;
     QRectF m_lastBounds;
-    QSizeF m_minSize;
+
 
 
 signals:
