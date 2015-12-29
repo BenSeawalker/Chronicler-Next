@@ -12,7 +12,8 @@ CConditionProperties::CConditionProperties(CBubble *bbl, QStringListModel *model
         connect(m_labelEdit, SIGNAL(textChanged(QString)), this, SLOT(LabelChanged(QString)));
 
         // Story
-        QLabel *lblCondition = new QLabel(tr("*IF:"), this);
+        QLabel *lblConditionStart = new QLabel(tr("*if ("), this);
+        QLabel *lblConditionEnd = new QLabel(tr(")"), this);
         m_conditionEdit = new CLineEdit(this, m_model);
         connect(m_conditionEdit, SIGNAL(textChanged()), this, SLOT(ConditionChanged()));
 
@@ -29,8 +30,8 @@ CConditionProperties::CConditionProperties(CBubble *bbl, QStringListModel *model
         m_orderEdit->setMaximumWidth(50);
         m_orderEdit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
         connect(m_orderEdit, SIGNAL(textChanged(QString)), this, SLOT(OrderChanged(QString)));
-
-
+        
+        
     // LABELS
         // Title
         QHBoxLayout *l1 = new QHBoxLayout();
@@ -39,8 +40,9 @@ CConditionProperties::CConditionProperties(CBubble *bbl, QStringListModel *model
 
         // Story
         QHBoxLayout *l2 = new QHBoxLayout();
-        l2->addWidget(lblCondition);
+        l2->addWidget(lblConditionStart);
         l2->addWidget(m_conditionEdit);
+        l2->addWidget(lblConditionEnd);
 
         // Order
         QHBoxLayout *l3 = new QHBoxLayout();
@@ -110,16 +112,16 @@ void CConditionProperties::SetBubble(CBubble *bbl)
     if(m_bbl)
     {
         setEnabled(true);
-
+        
         m_labelEdit->setText(m_bbl->m_label);
         m_labelEdit->setFont(bbl->GetFont());
-        m_labelEdit->setFocus();
-
+        //m_labelEdit->setFocus();
+        
         m_conditionEdit->setText(m_bbl->m_conditionText);
         m_conditionEdit->setFont(bbl->GetFont());
-
+        
         m_lockEdit->setChecked(m_bbl->m_locked);
-
+        
         m_orderEdit->setText(QString().number(m_bbl->m_order));
         m_orderEdit->setEnabled(m_lockEdit->isChecked());
     }

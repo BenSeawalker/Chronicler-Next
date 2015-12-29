@@ -70,9 +70,7 @@ void CPropertiesView::SetBubble(CBubble *bbl)
     else
     {
         m_storyProperties->SetBubble(0);
-        //m_storyProperties->show();
         m_conditionProperties->SetBubble(0);
-        //m_conditionProperties->hide();
     }
 }
 

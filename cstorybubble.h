@@ -6,7 +6,6 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "cbubble.h"
-#include "propstorybubble.h"
 #include "ctextitem.h"
 
 
@@ -39,18 +38,12 @@ protected:
 //    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt);
 
 private:
-    PropStoryBubble * m_properties;
-
     CTextItem * m_title;
     CTextItem * m_story;
 
     bool m_resize;
     QPointF m_offset;
     QRectF m_lastBounds;
-
-
-private slots:
-    void PropertiesAccepted();
 };
 
 #endif // CSTORYBUBBLE_H

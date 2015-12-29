@@ -581,13 +581,13 @@ void MainWindow::createToolbars()
 
     QToolButton *storyBubbleToolButton = new QToolButton;
     storyBubbleToolButton->setCheckable(true);
-    storyBubbleToolButton->setIcon(QIcon(":/images/floodfill.png"));
+    storyBubbleToolButton->setIcon(QIcon(":/images/icn_story.png"));
     QToolButton *conditionBubbleToolButton = new QToolButton;
     conditionBubbleToolButton->setCheckable(true);
-    conditionBubbleToolButton->setIcon(QIcon(":/images/floodfill.png"));
+    conditionBubbleToolButton->setIcon(QIcon(":/images/icn_condition.png"));
     QToolButton *actionBubbleToolButton = new QToolButton;
     actionBubbleToolButton->setCheckable(true);
-    actionBubbleToolButton->setIcon(QIcon(":/images/floodfill.png"));
+    actionBubbleToolButton->setIcon(QIcon(":/images/icn_choice.png"));
 
 
     pointerTypeGroup = new QButtonGroup(this);

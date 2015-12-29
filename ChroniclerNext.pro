@@ -8,7 +8,6 @@ HEADERS	    =   mainwindow.h \
     cbubble.h \
     cstorybubble.h \
     ctextitem.h \
-    propstorybubble.h \
     ctextedit.h \
     cstoryproperties.h \
     cpropertiesview.h \
@@ -24,7 +23,6 @@ SOURCES	    =   mainwindow.cpp \
     cbubble.cpp \
     cstorybubble.cpp \
     ctextitem.cpp \
-    propstorybubble.cpp \
     ctextedit.cpp \
     cstoryproperties.cpp \
     cpropertiesview.cpp \
@@ -37,5 +35,4 @@ RESOURCES   =	chroniclernext.qrc
 # install
 TARGET = Chronicler-Next
 
-FORMS += \
-    cstoryproperties.ui
+FORMS +=
