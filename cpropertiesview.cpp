@@ -7,8 +7,13 @@ CPropertiesView::CPropertiesView(QStringListModel *model, QWidget *parent) : QWi
     m_storyProperties = new CStoryProperties(NULL, model, parent);
     m_storyProperties->setEnabled(false);
 
+    m_conditionProperties = new CConditionProperties(NULL, model, parent);
+    m_conditionProperties->setEnabled(false);
+    m_conditionProperties->hide();
+
     m_layout = new QVBoxLayout(this);
     m_layout->addWidget(m_storyProperties);
+    m_layout->addWidget(m_conditionProperties);
     setLayout(m_layout);
 
 //    QPalette Pal(palette());
@@ -41,26 +46,33 @@ void CPropertiesView::SetBubble(CBubble *bbl)
 {
     if(bbl)
     {
+        m_storyProperties->hide();
+        m_conditionProperties->hide();
+
         switch(bbl->GetType())
         {
         case CBubble::Story:
-            m_layout->removeItem(m_layout->takeAt(0));
             m_storyProperties->SetBubble(bbl);
-            m_layout->addWidget(m_storyProperties);
+            m_storyProperties->show();
         break;
 
         case CBubble::Condition:
-
+            m_conditionProperties->SetBubble(bbl);
+            m_conditionProperties->show();
         break;
 
-        case CBubble::Action:
+        case CBubble::Choice:
             m_storyProperties->SetBubble(0);
+            m_conditionProperties->SetBubble(0);
         break;
         }
     }
     else
     {
         m_storyProperties->SetBubble(0);
+        //m_storyProperties->show();
+        m_conditionProperties->SetBubble(0);
+        //m_conditionProperties->hide();
     }
 }
 

@@ -12,7 +12,9 @@ HEADERS	    =   mainwindow.h \
     ctextedit.h \
     cstoryproperties.h \
     cpropertiesview.h \
-    cactionbubble.h
+    cconditionbubble.h \
+    cconditionproperties.h \
+    clineedit.h
 SOURCES	    =   mainwindow.cpp \
 		diagramitem.cpp \
 		main.cpp \
@@ -26,7 +28,9 @@ SOURCES	    =   mainwindow.cpp \
     ctextedit.cpp \
     cstoryproperties.cpp \
     cpropertiesview.cpp \
-    cactionbubble.cpp
+    cconditionbubble.cpp \
+    cconditionproperties.cpp \
+    clineedit.cpp
 RESOURCES   =	chroniclernext.qrc
 
 

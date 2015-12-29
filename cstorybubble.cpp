@@ -18,12 +18,12 @@ CStoryBubble::CStoryBubble(QMenu *contextMenu, QGraphicsItem *parent)
     QString s("Allow miles wound place the leave had. To sitting subject no improve studied limited. Ye indulgence unreserved connection alteration appearance my an astonished. Up as seen sent make he they of. Her raising and himself pasture believe females. Fancy she stuff after aware merit small his. Charmed esteems luckily age out. By an outlived insisted procured improved am. Paid hill fine ten now love even leaf. Supplied feelings mr of dissuade recurred no it offering honoured. Am of of in collecting devonshire favourable excellence. Her sixteen end ashamed cottage yet reached get hearing invited. Resources ourselves sweetness ye do no perfectly. Warmly warmth six one any wisdom. Family giving is pulled beauty chatty highly no. Blessing appetite domestic did mrs judgment rendered entirely. Highly indeed had garden not. Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behaviour arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected he me. Engaged its was evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began of cause an scale. Subjects he prospect elegance followed no overcame possible it on. Looking started he up perhaps against. How remainder all additions get elsewhere resources. One missed shy wishes supply design answer formed. Prevent on present hastily passage an subject in be. Be happiness arranging so newspaper defective affection ye. Families blessing he in to no daughter. Do so written as raising parlors spirits mr elderly. Made late in of high left hold. Carried females of up highest calling. Limits marked led silent dining her she far. Sir but elegance marriage dwelling likewise position old pleasure men. Dissimilar themselves simplicity no of contrasted as. Delay great day hours men. Stuff front to do allow to asked he. Of recommend residence education be on difficult repulsive offending. Judge views had mirth table seems great him for her. Alone all happy asked begin fully stand own get. Excuse ye seeing result of we. See scale dried songs old may not. Promotion did disposing you household any instantly. Hills we do under times at first short an.");
 
     m_story = new CTextItem(s, QRectF(), this);
-    m_story->SetStyle(Qt::TextWordWrap);
+    m_story->SetStyle(Qt::AlignLeft | Qt::TextWordWrap);
 
     setCursor(Qt::PointingHandCursor);
     setAcceptHoverEvents(true);
 
-    setShape();
+    UpdateShape();
 }
 
 void CStoryBubble::mousePressEvent(QGraphicsSceneMouseEvent *evt)
@@ -56,7 +56,7 @@ void CStoryBubble::mouseMoveEvent(QGraphicsSceneMouseEvent *evt)
         setPolygon(QRectF(m_lastBounds.x(), m_lastBounds.y(),
                           qMax<float>(m_lastBounds.width() + delta.x(), m_minSize.width()),
                           qMax<float>(m_lastBounds.height() + delta.y(), m_minSize.height())));
-        setShape();
+        UpdateShape();
     }
     else
         CBubble::mouseMoveEvent(evt);
@@ -98,25 +98,7 @@ void CStoryBubble::PropertiesAccepted()
 }
 
 
-QVariant CStoryBubble::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    if (change == QGraphicsItem::ItemSelectedHasChanged && value.toBool())
-        emit SelectedChanged(this);
-
-    return CBubble::itemChange(change, value);
-}
-
-
-void CStoryBubble::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-{
-    QPen outline = (isSelected() ? QPen(QColor(255,200,0), 2) : QPen(m_lineColor, 1.5));
-    painter->setPen(outline);
-    painter->setBrush(QBrush(m_color));
-    painter->drawPolygon(m_polygon, Qt::WindingFill);
-}
-
-
-void CStoryBubble::setShape()
+void CStoryBubble::UpdateShape()
 {
     QRectF b = boundingRect();
     qreal th = m_title->textBounds().height() + 10.0f;
@@ -152,7 +134,7 @@ void CStoryBubble::SetFont(const QFont &font)
         m_font = font;
         m_title->SetFont(m_font);
         m_story->SetFont(m_font);
-        setShape();
+        UpdateShape();
     }
 }
 

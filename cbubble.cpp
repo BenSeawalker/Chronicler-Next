@@ -17,16 +17,16 @@ CBubble::CBubble(QMenu *contextMenu, QGraphicsItem *parent)
 
 void CBubble::removeArrow(Arrow *arrow)
 {
-    int index = m_arrows.indexOf(arrow);
+    int index = m_links.indexOf(arrow);
 
     if (index != -1)
-        m_arrows.removeAt(index);
+        m_links.removeAt(index);
 }
 
 
 void CBubble::removeArrows()
 {
-    foreach (Arrow *arrow, m_arrows) {
+    foreach (Arrow *arrow, m_links) {
         arrow->startItem()->removeArrow(arrow);
         arrow->endItem()->removeArrow(arrow);
         scene()->removeItem(arrow);
@@ -37,7 +37,7 @@ void CBubble::removeArrows()
 
 void CBubble::addArrow(Arrow *arrow)
 {
-    m_arrows.append(arrow);
+    m_links.append(arrow);
 }
 
 
@@ -64,13 +64,23 @@ void CBubble::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 QVariant CBubble::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == QGraphicsItem::ItemPositionChange) {
-        foreach (Arrow *arrow, m_arrows) {
+    if (change == QGraphicsItem::ItemSelectedHasChanged && value.toBool())
+        emit Selected(this);
+    else if (change == QGraphicsItem::ItemPositionChange)
+    {
+        foreach (Arrow *arrow, m_links)
             arrow->updatePosition();
-        }
     }
 
     return value;
+}
+
+void CBubble::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
+    QPen outline = (isSelected() ? QPen(QColor(255,200,0), 2) : QPen(m_lineColor, 1.5));
+    painter->setPen(outline);
+    painter->setBrush(QBrush(m_color));
+    painter->drawPolygon(m_polygon, Qt::WindingFill);
 }
 
 

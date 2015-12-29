@@ -34,12 +34,14 @@ private:
     QString textUnderCursor() const;
     QStringList *listFromFile(const QString & fileName);
 
-private:
+protected:
     QCompleter * m_completer;
     //QStringList * m_list;
     QStringListModel * m_model;
     QStringListModel * m_filtered;
     bool m_enabled;
+
+    bool m_acceptsReturn;
 
 private slots:
     void insertCompletion(const QString &completion);

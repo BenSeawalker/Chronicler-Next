@@ -25,8 +25,10 @@ class Arrow;
 
 class CBubble : public QObject, public QGraphicsPolygonItem
 {
+    Q_OBJECT
+
 public:
-    enum BType { Story, Condition, Action};
+    enum BType { Story, Condition, Choice};
 
     CBubble(QGraphicsItem *parent);
     CBubble(QMenu *contextMenu, QGraphicsItem *parent = 0);
@@ -51,16 +53,18 @@ public:
     BType GetType() const { return m_type; }
 
 protected:
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) Q_DECL_OVERRIDE;
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
-    virtual void setShape() = 0;
+    virtual void UpdateShape() = 0;
 
 protected:
     QRectF m_bounds;
     QPolygonF m_polygon;
     QMenu *m_contextMenu;
-    QList<Arrow *> m_arrows;
+    QList<Arrow *> m_links;
+    QList<Arrow *> m_connections;
     int m_order;
     bool m_locked;
     QColor m_color;
@@ -69,6 +73,10 @@ protected:
     QColor m_fontColor;
     BType m_type;
     QSizeF m_minSize;
+
+
+signals:
+    void Selected(QGraphicsItem *item);
 };
 
 #endif // CBUBBLE_H

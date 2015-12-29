@@ -28,8 +28,7 @@ public:
 
 
 protected:
-    virtual void setShape();
-    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    virtual void UpdateShape();
 
 
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *evt);
@@ -38,9 +37,6 @@ protected:
 
     virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *evt);
 //    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt);
-
-
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
 private:
     PropStoryBubble * m_properties;
@@ -52,10 +48,6 @@ private:
     QPointF m_offset;
     QRectF m_lastBounds;
 
-
-
-signals:
-    void SelectedChanged(QGraphicsItem *item);
 
 private slots:
     void PropertiesAccepted();

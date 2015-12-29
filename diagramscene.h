@@ -64,7 +64,7 @@ class DiagramScene : public QGraphicsScene
     Q_OBJECT
 
 public:
-    enum Mode { InsertItem, InsertLine, InsertText, MoveItem, InsertStory, InsertCondition, InsertAction };
+    enum Mode { InsertItem, InsertLine, InsertText, MoveItem, InsertStory, InsertCondition, InsertChoice };
 
     explicit DiagramScene(QMenu *itemMenu, QObject *parent = 0);
     QFont font() const { return myFont; }

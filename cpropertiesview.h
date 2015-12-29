@@ -3,9 +3,9 @@
 
 #include <QWidget>
 #include <QStringListModel>
-#include <QPalette>
 
 #include "cstoryproperties.h"
+#include "cconditionproperties.h"
 
 class CPropertiesView : public QWidget
 {
@@ -26,6 +26,7 @@ private:
     QVBoxLayout * m_layout;
 
     CStoryProperties *m_storyProperties;
+    CConditionProperties *m_conditionProperties;
 
 
 

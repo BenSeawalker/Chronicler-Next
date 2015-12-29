@@ -4,7 +4,7 @@
 #include <QFontMetrics>
 
 CTextItem::CTextItem(const QString &text, const QRectF &bounds, QGraphicsItem *parent)
-    : QGraphicsItem(parent), m_text(text), m_bounds(bounds), m_textBounds(bounds), m_color(Qt::black)
+    : QGraphicsItem(parent), m_text(text), m_bounds(bounds), m_textBounds(bounds), m_color(Qt::black), m_style(Qt::AlignLeft)
 {
     setFlag(QGraphicsItem::ItemIsMovable, false);
     setFlag(QGraphicsItem::ItemIsSelectable, false);
@@ -21,10 +21,28 @@ void CTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 }
 
 
-QRectF CTextItem::textBounds() const
+QRectF CTextItem::textBounds(const QSizeF &minimum) const
 {
     QFontMetrics fm(m_font);
-    return fm.boundingRect(m_text);
+    QSizeF size(minimum);
+    QStringList lines = m_text.split("\n", QString::KeepEmptyParts);
+
+    qreal height = 0;
+    foreach(QString text, lines)
+    {
+        if(text.isEmpty())
+            text = "W";
+
+        qreal width = fm.width(text);
+        if(width > size.width())
+            size.setWidth(width);
+
+        height += fm.height();
+    }
+    if(height > size.height())
+        size.setHeight(height);
+
+    return QRectF(boundingRect().topLeft(), size);
 }
 
 

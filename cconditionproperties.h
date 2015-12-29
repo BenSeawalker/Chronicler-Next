@@ -1,5 +1,6 @@
-#ifndef CSTORYPROPERTIES_H
-#define CSTORYPROPERTIES_H
+#ifndef CCONDITIONPROPERTIES_H
+#define CCONDITIONPROPERTIES_H
+
 
 #include <QWidget>
 #include <QLabel>
@@ -10,18 +11,18 @@
 #include <QVBoxLayout>
 #include <QStringListModel>
 
-#include "ctextedit.h"
+#include "clineedit.h"
 
 class CBubble;
-class CStoryBubble;
+class CConditionBubble;
 
 
-class CStoryProperties : public QWidget
+class CConditionProperties : public QWidget
 {
     Q_OBJECT
 
 public:
-    CStoryProperties(CBubble *bbl, QStringListModel *model, QWidget *parent = 0);
+    CConditionProperties(CBubble *bbl, QStringListModel *model, QWidget *parent = 0);
 
 public:
     void SetBubble(CBubble *bbl);
@@ -29,26 +30,23 @@ public:
     virtual void setFont(const QFont &font);
 
 private:
-    CStoryBubble *m_bbl;
+    CConditionBubble *m_bbl;
 
+    QLineEdit *m_labelEdit;
+    CLineEdit *m_conditionEdit;
     QStringListModel *m_model;
 
-    QLineEdit *m_titleEdit;
-    CTextEdit *m_storyEdit;
-
-    QCheckBox *m_lockEdit;
     QLineEdit *m_orderEdit;
-
-
+    QCheckBox *m_lockEdit;
 
 
 signals:
 
 private slots:
-    void TitleChanged(QString title);
-    void StoryChanged();
+    void LabelChanged(QString title);
+    void ConditionChanged();
     void OrderChanged(QString order);
     void LockedChanged(bool locked);
 };
 
-#endif // CSTORYPROPERTIES_H
+#endif // CCONDITIONPROPERTIES_H

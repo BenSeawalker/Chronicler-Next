@@ -1,11 +1,10 @@
 #include "ctextedit.h"
 
-#include <QDebug>
 
 CTextEdit::CTextEdit(QWidget * parent, QStringListModel * model, const QString & text)
-: QTextEdit(parent), m_completer(0), m_model(model), m_enabled(true)
+: QTextEdit(parent), m_completer(0), m_model(model), m_enabled(true), m_acceptsReturn(true)
 {
-    setTabChangesFocus(true);
+//    setTabChangesFocus(true);
     m_filtered = new QStringListModel(this);
     setText(text);
     setCompleter(new QCompleter(m_filtered, this));
@@ -68,11 +67,11 @@ QStringList *CTextEdit::listFromFile(const QString & fileName)
 
 int moveCursorToWordStart(QTextCursor & tc)
 {
-    tc.movePosition(tc.StartOfWord);
+    //tc.movePosition(tc.StartOfWord);
     tc.movePosition(tc.Left);
     tc.movePosition(tc.Right, QTextCursor::KeepAnchor);
 
-    int offset = 0;
+    int offset = 1;
     while(tc.selectedText() != " " && tc.position() > 1)
     {
         tc.movePosition(tc.Left);
@@ -90,6 +89,27 @@ int moveCursorToWordStart(QTextCursor & tc)
     }
 
     return offset;
+}
+
+QString CTextEdit::textUnderCursor() const
+{
+    QString selected_text = "";
+
+    QTextCursor tc = textCursor();
+    int offset = moveCursorToWordStart(tc);
+
+    for(int i = 0; i < offset; ++i)
+        tc.movePosition(tc.Right, QTextCursor::KeepAnchor);
+
+    if(tc.selectedText() == "*" || tc.selectedText() == "$" || tc.selectedText() == "${" )
+        selected_text = tc.selectedText();
+
+    if(!selected_text.isEmpty())
+        tc.select(QTextCursor::WordUnderCursor);
+    selected_text = tc.selectedText();
+
+
+    return selected_text;
 }
 
 
@@ -111,25 +131,7 @@ void CTextEdit::insertCompletion(const QString& completion)
 }
 
 
-QString CTextEdit::textUnderCursor() const
-{
-    QString selected_text = "";
 
-    QTextCursor tc = textCursor();
-    int offset = moveCursorToWordStart(tc);
-
-    for(int i = 0; i < offset; ++i)
-        tc.movePosition(tc.Right, QTextCursor::KeepAnchor);
-
-    if(tc.selectedText() == "*" || tc.selectedText() == "$" || tc.selectedText() == "${" )
-        selected_text = tc.selectedText();
-
-    tc.select(QTextCursor::WordUnderCursor);
-    selected_text += tc.selectedText();
-
-
-    return selected_text;
-}
 
 
 void CTextEdit::focusInEvent(QFocusEvent *e)
@@ -145,6 +147,9 @@ void CTextEdit::keyPressEvent(QKeyEvent *e)
     bool isShortcut = (e->key() == Qt::Key_Escape);
     if(isShortcut)
         m_enabled = !m_enabled;
+
+    bool isReturn = (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter);
+    bool isTab = (e->key() == Qt::Key_Tab);
 
 
     if (m_completer && m_completer->popup()->isVisible()) {
@@ -162,7 +167,7 @@ void CTextEdit::keyPressEvent(QKeyEvent *e)
        }
     }
 
-    if (!m_completer || !isShortcut)
+    if ((!m_completer || !isShortcut) && !(isReturn && !m_acceptsReturn) && !isTab)
         QTextEdit::keyPressEvent(e);
 
 
@@ -173,21 +178,23 @@ void CTextEdit::keyPressEvent(QKeyEvent *e)
     bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
     QString completionPrefix = textUnderCursor();
 
-    if (!m_enabled || (hasModifier || e->text().isEmpty() || completionPrefix.isEmpty() || completionPrefix == " ")) {
-        m_completer->popup()->hide();
-        return;
-    }
-
     QStringList filteredList = m_model->stringList().filter(completionPrefix, m_completer->caseSensitivity());
-    //QStringListModel * filteredModel = new QStringListModel(filteredList, this);
     m_filtered->setStringList(filteredList);
 
-    //m_completer->setModel(m_filtered);
-    m_completer->popup()->setCurrentIndex(m_completer->completionModel()->index(0, 0));
 
-    QRect cr = cursorRect();
-    cr.setWidth(m_completer->popup()->sizeHintForColumn(0)
-                + m_completer->popup()->verticalScrollBar()->sizeHint().width());
+    if (!m_enabled || (hasModifier || e->text().isEmpty() || completionPrefix.isEmpty() ||
+                       (!filteredList.isEmpty() && completionPrefix == filteredList.first())))
+    {
+        m_completer->popup()->hide();
+    }
+    else
+    {
+        m_completer->popup()->setCurrentIndex(m_completer->completionModel()->index(0, 0));
 
-    m_completer->complete(cr); // popup it up!
+        QRect cr = cursorRect();
+        cr.setWidth(m_completer->popup()->sizeHintForColumn(0)
+                    + m_completer->popup()->verticalScrollBar()->sizeHint().width());
+
+        m_completer->complete(cr); // popup it up!
+    }
 }
