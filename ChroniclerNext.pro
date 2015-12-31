@@ -13,7 +13,10 @@ HEADERS	    =   mainwindow.h \
     cpropertiesview.h \
     cconditionbubble.h \
     cconditionproperties.h \
-    clineedit.h
+    clineedit.h \
+    cchoicebubble.h \
+    cchoice.h \
+    clink.h
 SOURCES	    =   mainwindow.cpp \
 		diagramitem.cpp \
 		main.cpp \
@@ -28,7 +31,10 @@ SOURCES	    =   mainwindow.cpp \
     cpropertiesview.cpp \
     cconditionbubble.cpp \
     cconditionproperties.cpp \
-    clineedit.cpp
+    clineedit.cpp \
+    cchoicebubble.cpp \
+    cchoice.cpp \
+    clink.cpp
 RESOURCES   =	chroniclernext.qrc
 
 

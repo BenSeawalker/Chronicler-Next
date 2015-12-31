@@ -19,6 +19,9 @@ CStoryBubble::CStoryBubble(QMenu *contextMenu, QGraphicsItem *parent)
 
     m_story = new CTextItem(s, QRectF(), this);
     m_story->SetStyle(Qt::AlignLeft);// | Qt::TextWordWrap);
+    
+    m_bLink = new CLink(this);
+    m_bLink->setPos(0, 102);
 
     setCursor(Qt::PointingHandCursor);
     setAcceptHoverEvents(true);

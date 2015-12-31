@@ -81,12 +81,8 @@ protected:
 //    void SelectedItemChanged(CBubble *bbl);
 
 private slots:
-    void backgroundButtonGroupClicked(QAbstractButton *button);
-    void buttonGroupClicked(int id);
     void deleteItem();
     void pointerGroupClicked(int id);
-    void bringToFront();
-    void sendToBack();
     void itemInserted(CBubble *);
     void textInserted(QGraphicsTextItem *item);
     void currentFontChanged(const QFont &font);
@@ -105,15 +101,9 @@ private slots:
     void sceneLeftReleased();
 
 private:
-
-    void createSidebar();
     void createActions();
     void createMenus();
     void createToolbars();
-    QWidget *createBackgroundCellWidget(const QString &text,
-                                        const QString &image);
-    QWidget *createCellWidget(const QString &text,
-                              DiagramItem::DiagramType type);
     QMenu *createColorMenu(const char *slot, QColor defaultColor);
     QIcon createColorToolButtonIcon(const QString &image, QColor color);
     QIcon createColorIcon(QColor color);

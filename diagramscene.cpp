@@ -52,7 +52,7 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
     : QGraphicsScene(parent)
 {
     myItemMenu = itemMenu;
-    myMode = MoveItem;
+    myMode = Cursor;
     myItemType = DiagramItem::Step;
     line = 0;
     textItem = 0;
@@ -234,7 +234,7 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (myMode == InsertLine && line != 0) {
         QLineF newLine(line->line().p1(), mouseEvent->scenePos());
         line->setLine(newLine);
-    } else if (myMode == MoveItem) {
+    } else if (myMode == Cursor) {
         QGraphicsScene::mouseMoveEvent(mouseEvent);
     }
 }

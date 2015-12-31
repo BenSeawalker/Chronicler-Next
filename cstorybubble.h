@@ -7,6 +7,7 @@
 
 #include "cbubble.h"
 #include "ctextitem.h"
+#include "clink.h"
 
 
 class CStoryBubble : public CBubble
@@ -40,6 +41,8 @@ protected:
 private:
     CTextItem * m_title;
     CTextItem * m_story;
+    
+    CLink * m_bLink;
 
     bool m_resize;
     QPointF m_offset;

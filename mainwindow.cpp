@@ -52,7 +52,7 @@
 
 const int InsertTextButton = 10;
 
-//! [0]
+
 MainWindow::MainWindow()
 {
     m_ShiftHeld = false;
@@ -78,6 +78,7 @@ MainWindow::MainWindow()
 
     view = new QGraphicsView(scene);
     view->setDragMode(QGraphicsView::RubberBandDrag);
+    view->setRenderHint(QPainter::Antialiasing, true);
 
     QStringList lst = QStringList() << "*set" << "*action" << "*create" << "*if" << "*elseif";
     QStringListModel * lstModel = new QStringListModel(lst, this);
@@ -99,7 +100,7 @@ MainWindow::MainWindow()
     setWindowTitle(tr("Chronicler-Next"));
     setUnifiedTitleAndToolBarOnMac(true);
 }
-//! [0]
+
 
 void MainWindow::keyPressEvent(QKeyEvent *evt)
 {
@@ -116,53 +117,12 @@ void MainWindow::keyReleaseEvent(QKeyEvent *evt)
     if(evt->key() == Qt::Key_Shift)
     {
         m_ShiftHeld = false;
-        pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-        scene->setMode(DiagramScene::MoveItem);
+        pointerTypeGroup->button(int(DiagramScene::Cursor))->setChecked(true);
+        scene->setMode(DiagramScene::Cursor);
     }
 }
 
 
-//! [1]
-void MainWindow::backgroundButtonGroupClicked(QAbstractButton *button)
-{
-//    QList<QAbstractButton *> buttons = backgroundButtonGroup->buttons();
-//    foreach (QAbstractButton *myButton, buttons) {
-//        if (myButton != button)
-//            button->setChecked(false);
-//    }
-//    QString text = button->text();
-//    if (text == tr("Blue Grid"))
-//        scene->setBackgroundBrush(QPixmap(":/images/background1.png"));
-//    else if (text == tr("White Grid"))
-//        scene->setBackgroundBrush(QPixmap(":/images/background2.png"));
-//    else if (text == tr("Gray Grid"))
-//        scene->setBackgroundBrush(QPixmap(":/images/background3.png"));
-//    else
-//        scene->setBackgroundBrush(QPixmap(":/images/background4.png"));
-
-//    scene->update();
-//    view->update();
-}
-//! [1]
-
-//! [2]
-void MainWindow::buttonGroupClicked(int id)
-{
-//    QList<QAbstractButton *> buttons = buttonGroup->buttons();
-//    foreach (QAbstractButton *button, buttons) {
-//        if (buttonGroup->button(id) != button)
-//            button->setChecked(false);
-//    }
-//    if (id == InsertTextButton) {
-//        scene->setMode(DiagramScene::InsertText);
-//    } else {
-//        scene->setItemType(DiagramItem::DiagramType(id));
-//        scene->setMode(DiagramScene::InsertItem);
-//    }
-}
-//! [2]
-
-//! [3]
 void MainWindow::deleteItem()
 {
     foreach (QGraphicsItem *item, scene->selectedItems()) {
@@ -182,90 +142,48 @@ void MainWindow::deleteItem()
          delete item;
      }
 }
-//! [3]
 
-//! [4]
+
 void MainWindow::pointerGroupClicked(int id)
 {
     scene->setMode(DiagramScene::Mode(id));
 
-    if(DiagramScene::Mode(id) == DiagramScene::InsertLine)
+    if(id == int(DiagramScene::InsertLine))
         view->setDragMode(QGraphicsView::NoDrag);
     else
         view->setDragMode(QGraphicsView::RubberBandDrag);
 }
-//! [4]
 
-//! [5]
-void MainWindow::bringToFront()
-{
-//    if (scene->selectedItems().isEmpty())
-//        return;
 
-//    QGraphicsItem *selectedItem = scene->selectedItems().first();
-//    QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
-
-//    qreal zValue = 0;
-//    foreach (QGraphicsItem *item, overlapItems) {
-//        if (item->zValue() >= zValue && item->type() == DiagramItem::Type)
-//            zValue = item->zValue() + 0.1;
-//    }
-//    selectedItem->setZValue(zValue);
-}
-//! [5]
-
-//! [6]
-void MainWindow::sendToBack()
-{
-//    if (scene->selectedItems().isEmpty())
-//        return;
-
-//    QGraphicsItem *selectedItem = scene->selectedItems().first();
-//    QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
-
-//    qreal zValue = 0;
-//    foreach (QGraphicsItem *item, overlapItems) {
-//        if (item->zValue() <= zValue && item->type() == DiagramItem::Type)
-//            zValue = item->zValue() - 0.1;
-//    }
-//    selectedItem->setZValue(zValue);
-}
-//! [6]
-
-//! [7]
 void MainWindow::itemInserted(CBubble *)
 {
     if(!m_ShiftHeld)
     {
-        pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-        scene->setMode(DiagramScene::MoveItem);// DiagramScene::Mode(pointerTypeGroup->checkedId()));
+        pointerTypeGroup->button(int(DiagramScene::Cursor))->setChecked(true);
+        scene->setMode(DiagramScene::Cursor);
     }
 }
-//! [7]
 
-//! [8]
+
 void MainWindow::textInserted(QGraphicsTextItem *)
 {
     buttonGroup->button(InsertTextButton)->setChecked(false);
     scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 }
-//! [8]
 
-//! [9]
+
 void MainWindow::currentFontChanged(const QFont &)
 {
     handleFontChange();
 }
-//! [9]
 
-//! [10]
+
 void MainWindow::fontSizeChanged(const QString &)
 {
     handleFontChange();
 }
-//! [10]
 
-//! [11]
+
 void MainWindow::sceneScaleChanged(const QString &scale)
 {
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
@@ -274,9 +192,8 @@ void MainWindow::sceneScaleChanged(const QString &scale)
     view->translate(oldMatrix.dx(), oldMatrix.dy());
     view->scale(newScale, newScale);
 }
-//! [11]
 
-//! [12]
+
 void MainWindow::textColorChanged()
 {
     textAction = qobject_cast<QAction *>(sender());
@@ -285,9 +202,8 @@ void MainWindow::textColorChanged()
                                      qvariant_cast<QColor>(textAction->data())));
     textButtonTriggered();
 }
-//! [12]
 
-//! [13]
+
 void MainWindow::itemColorChanged()
 {
     fillAction = qobject_cast<QAction *>(sender());
@@ -296,9 +212,8 @@ void MainWindow::itemColorChanged()
                                      qvariant_cast<QColor>(fillAction->data())));
     fillButtonTriggered();
 }
-//! [13]
 
-//! [14]
+
 void MainWindow::lineColorChanged()
 {
     lineAction = qobject_cast<QAction *>(sender());
@@ -307,30 +222,26 @@ void MainWindow::lineColorChanged()
                                      qvariant_cast<QColor>(lineAction->data())));
     lineButtonTriggered();
 }
-//! [14]
 
-//! [15]
+
 void MainWindow::textButtonTriggered()
 {
     scene->setTextColor(qvariant_cast<QColor>(textAction->data()));
 }
-//! [15]
 
-//! [16]
+
 void MainWindow::fillButtonTriggered()
 {
     scene->setItemColor(qvariant_cast<QColor>(fillAction->data()));
 }
-//! [16]
 
-//! [17]
+
 void MainWindow::lineButtonTriggered()
 {
     scene->setLineColor(qvariant_cast<QColor>(lineAction->data()));
 }
-//! [17]
 
-//! [18]
+
 void MainWindow::handleFontChange()
 {
     QFont font = fontCombo->currentFont();
@@ -342,9 +253,8 @@ void MainWindow::handleFontChange()
     scene->setFont(font);
     properties->setFont(font);
 }
-//! [18]
 
-//! [19]
+
 void MainWindow::itemSelected(QGraphicsItem *selectedItem)
 {
     if(!scene->isRubberBandSelecting())
@@ -374,77 +284,13 @@ void MainWindow::sceneLeftReleased()
     }
 }
 
-//! [19]
 
-//! [20]
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("About Chronicler-Next"), tr("<b>Insert legal stuff here...</b>"));
 }
-//! [20]
-
-//! [21]
-void MainWindow::createSidebar()
-{
-//    buttonGroup = new QButtonGroup(this);
-//    buttonGroup->setExclusive(false);
-//    connect(buttonGroup, SIGNAL(buttonClicked(int)),
-//            this, SLOT(buttonGroupClicked(int)));
-//    QGridLayout *layout = new QGridLayout;
-//    layout->addWidget(createCellWidget(tr("Conditional"), DiagramItem::Conditional), 0, 0);
-//    layout->addWidget(createCellWidget(tr("Process"), DiagramItem::Step),0, 1);
-//    layout->addWidget(createCellWidget(tr("Input/Output"), DiagramItem::Io), 1, 0);
-////! [21]
-
-//    QToolButton *textButton = new QToolButton;
-//    textButton->setCheckable(true);
-//    buttonGroup->addButton(textButton, InsertTextButton);
-//    textButton->setIcon(QIcon(QPixmap(":/images/textpointer.png")));
-//    textButton->setIconSize(QSize(50, 50));
-//    QGridLayout *textLayout = new QGridLayout;
-//    textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
-//    textLayout->addWidget(new QLabel(tr("Text")), 1, 0, Qt::AlignCenter);
-//    QWidget *textWidget = new QWidget;
-//    textWidget->setLayout(textLayout);
-//    layout->addWidget(textWidget, 1, 1);
-
-//    layout->setRowStretch(3, 10);
-//    layout->setColumnStretch(2, 10);
-
-//    QWidget *itemWidget = new QWidget;
-//    itemWidget->setLayout(layout);
-
-//    backgroundButtonGroup = new QButtonGroup(this);
-//    connect(backgroundButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
-//            this, SLOT(backgroundButtonGroupClicked(QAbstractButton*)));
-
-//    QGridLayout *backgroundLayout = new QGridLayout;
-//    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Blue Grid"),
-//                                                           ":/images/background1.png"), 0, 0);
-//    backgroundLayout->addWidget(createBackgroundCellWidget(tr("White Grid"),
-//                                                           ":/images/background2.png"), 0, 1);
-//    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Gray Grid"),
-//                                                           ":/images/background3.png"), 1, 0);
-//    backgroundLayout->addWidget(createBackgroundCellWidget(tr("No Grid"),
-//                                                           ":/images/background4.png"), 1, 1);
-
-//    backgroundLayout->setRowStretch(2, 10);
-//    backgroundLayout->setColumnStretch(2, 10);
-
-//    QWidget *backgroundWidget = new QWidget;
-//    backgroundWidget->setLayout(backgroundLayout);
 
 
-////! [22]
-//    toolBox = new QToolBox;
-//    toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
-//    toolBox->setMinimumWidth(itemWidget->sizeHint().width());
-//    toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));
-//    toolBox->addItem(backgroundWidget, tr("Backgrounds"));
-}
-//! [22]
-
-//! [23]
 void MainWindow::createActions()
 {
     toFrontAction = new QAction(QIcon(":/images/bringtofront.png"),
@@ -452,7 +298,6 @@ void MainWindow::createActions()
     toFrontAction->setShortcut(tr("Ctrl+F"));
     toFrontAction->setStatusTip(tr("Bring item to front"));
     connect(toFrontAction, SIGNAL(triggered()), this, SLOT(bringToFront()));
-//! [23]
 
     sendBackAction = new QAction(QIcon(":/images/sendtoback.png"), tr("Send to &Back"), this);
     sendBackAction->setShortcut(tr("Ctrl+B"));
@@ -491,7 +336,7 @@ void MainWindow::createActions()
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 }
 
-//! [24]
+
 void MainWindow::createMenus()
 {
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -506,17 +351,10 @@ void MainWindow::createMenus()
     aboutMenu = menuBar()->addMenu(tr("&Help"));
     aboutMenu->addAction(aboutAction);
 }
-//! [24]
 
-//! [25]
+
 void MainWindow::createToolbars()
 {
-//! [25]
-//    editToolBar = addToolBar(tr("Edit"));
-//    editToolBar->addAction(deleteAction);
-//    editToolBar->addAction(toFrontAction);
-//    editToolBar->addAction(sendBackAction);
-
     fontCombo = new QFontComboBox();
     connect(fontCombo, SIGNAL(currentFontChanged(QFont)),
             this, SLOT(currentFontChanged(QFont)));
@@ -538,7 +376,6 @@ void MainWindow::createToolbars()
     connect(fontColorToolButton, SIGNAL(clicked()),
             this, SLOT(textButtonTriggered()));
 
-//! [26]
     fillColorToolButton = new QToolButton;
     fillColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
     fillColorToolButton->setMenu(createColorMenu(SLOT(itemColorChanged()), Qt::white));
@@ -547,7 +384,6 @@ void MainWindow::createToolbars()
                                      ":/images/floodfill.png", Qt::white));
     connect(fillColorToolButton, SIGNAL(clicked()),
             this, SLOT(fillButtonTriggered()));
-//! [26]
 
     lineColorToolButton = new QToolButton;
     lineColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
@@ -591,7 +427,7 @@ void MainWindow::createToolbars()
 
 
     pointerTypeGroup = new QButtonGroup(this);
-    pointerTypeGroup->addButton(pointerButton, int(DiagramScene::MoveItem));
+    pointerTypeGroup->addButton(pointerButton, int(DiagramScene::Cursor));
     pointerTypeGroup->addButton(linePointerButton, int(DiagramScene::InsertLine));
     pointerTypeGroup->addButton(storyBubbleToolButton, int(DiagramScene::InsertStory));
     pointerTypeGroup->addButton(conditionBubbleToolButton, int(DiagramScene::InsertCondition));
@@ -614,68 +450,9 @@ void MainWindow::createToolbars()
     pointerToolBar->addWidget(conditionBubbleToolButton);
     pointerToolBar->addWidget(actionBubbleToolButton);
     pointerToolBar->addWidget(sceneScaleCombo);
-
-//    bubbleTypeGroup = new QButtonGroup(this);
-//    bubbleTypeGroup->addButton(storyBubbleToolButton);
-//    bubbleTypeGroup->addButton(conditionBubbleToolButton);
-//    bubbleTypeGroup->addButton(actionBubbleToolButton);
-
-
-//    bubbleToolBar = addToolBar(tr("Bubbles"));
-//    bubbleToolBar->addWidget(storyBubbleToolButton);
-//    bubbleToolBar->addWidget(conditionBubbleToolButton);
-//    bubbleToolBar->addWidget(actionBubbleToolButton);
-
-//! [27]
 }
-//! [27]
 
-//! [28]
-QWidget *MainWindow::createBackgroundCellWidget(const QString &text, const QString &image)
-{
-//    QToolButton *button = new QToolButton;
-//    button->setText(text);
-//    button->setIcon(QIcon(image));
-//    button->setIconSize(QSize(50, 50));
-//    button->setCheckable(true);
-//    backgroundButtonGroup->addButton(button);
 
-//    QGridLayout *layout = new QGridLayout;
-//    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-//    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
-
-//    QWidget *widget = new QWidget;
-//    widget->setLayout(layout);
-
-//    return widget;
-}
-//! [28]
-
-//! [29]
-QWidget *MainWindow::createCellWidget(const QString &text, DiagramItem::DiagramType type)
-{
-
-//    DiagramItem item(type, itemMenu);
-//    QIcon icon(item.image());
-
-//    QToolButton *button = new QToolButton;
-//    button->setIcon(icon);
-//    button->setIconSize(QSize(50, 50));
-//    button->setCheckable(true);
-//    buttonGroup->addButton(button, int(type));
-
-//    QGridLayout *layout = new QGridLayout;
-//    layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-//    layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
-
-//    QWidget *widget = new QWidget;
-//    widget->setLayout(layout);
-
-//    return widget;
-}
-//! [29]
-
-//! [30]
 QMenu *MainWindow::createColorMenu(const char *slot, QColor defaultColor)
 {
     QList<QColor> colors;
@@ -696,9 +473,8 @@ QMenu *MainWindow::createColorMenu(const char *slot, QColor defaultColor)
     }
     return colorMenu;
 }
-//! [30]
 
-//! [31]
+
 QIcon MainWindow::createColorToolButtonIcon(const QString &imageFile, QColor color)
 {
     QPixmap pixmap(50, 80);
@@ -713,9 +489,8 @@ QIcon MainWindow::createColorToolButtonIcon(const QString &imageFile, QColor col
 
     return QIcon(pixmap);
 }
-//! [31]
 
-//! [32]
+
 QIcon MainWindow::createColorIcon(QColor color)
 {
     QPixmap pixmap(20, 20);
@@ -725,4 +500,3 @@ QIcon MainWindow::createColorIcon(QColor color)
 
     return QIcon(pixmap);
 }
-//! [32]
